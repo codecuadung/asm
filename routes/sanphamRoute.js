@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 const sanphamModel = require('../model/sanphamModel')
 
-router.get('/', async (req,res)=>{
+router.get('/sanphams', async (req,res)=>{
     try {
         const sanpham = await sanphamModel.find(); // Sử dụng sanphamModel để truy vấn dữ liệu từ collection sanpham
         res.json(sanpham); // Trả về dữ liệu dưới dạng JSON

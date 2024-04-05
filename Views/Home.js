@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, Image, TouchableOpacity, ScrollView } from 'react-native';
-
+import { useNavigation } from '@react-navigation/native';
 const Home = () => {
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
@@ -14,7 +15,7 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://192.168.0.102:3000/');
+      const response = await fetch('http://10.0.2.2:3000/sanphams');
       const data = await response.json();
       setData(data);
       setLoading(false);
@@ -98,12 +99,15 @@ const Home = () => {
         renderItem={({ item }) => (
           <View style={{ width: 150, height: 400, marginHorizontal: 5 }}>
             <Image style={{ resizeMode: 'cover', width: '100%', height: 155 }} source={{ uri: item.hinhAnh }} />
-            <View style={{height:70}}>
+            <View style={{height:50}}>
             <Text style={{ fontSize: 18, fontWeight: 'bold',color:'#F26398' }}>{item.tenSP}</Text>
             </View>
-            <Text style={{ fontSize: 18 }}>Mô tả: {item.ghiChu}</Text>
-            <Text style={{ fontSize: 18 }}>Giá: {item.giaSP}</Text>
-            
+            <View style={{justifyContent:'center',alignItems:'center'}}>
+            <Text style={{ fontSize: 18 }}>Giá: {item.giaSP}đ</Text>
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('ChiTietSP', { selectedItem: item })} style={{ backgroundColor: '#F26398', padding: 10, borderRadius: 5,justifyContent:'center',alignItems:'center' }}>
+              <Text style={{ fontSize: 18, color: 'white' }}>Xem thêm</Text>
+            </TouchableOpacity>
           </View>
         )}
       />

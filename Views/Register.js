@@ -1,9 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { StyleSheet, Text, View, KeyboardAvoidingView, Image, TextInput, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Register = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const navigation = useNavigation();
+
+  const validate = () => {
+    if(password != confirmPassword){
+      alert('Mật khẩu phải trùng khớp!');
+      return false; // Trả về false nếu có lỗi
+    }
+    if(email == "" || password == "" || confirmPassword == ""){
+      alert('Vui lòng điền đầy đủ thông tin!');
+      return false; // Trả về false nếu có lỗi
+    }
+    const regex =  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!regex.test(email)){
+      alert('Email không đúng định dạng!');
+      return false; // Trả về false nếu có lỗi
+    }
+    if(password.length < 6){
+      alert('Mật khẩu phải có ít nhất 6 ký tự!');
+      return false; // Trả về false nếu có lỗi
+    }
+    return true; // Trả về true nếu không có lỗi
+  }
+  
+  const handleRegister = async () => {
+    try {
+      const isvalidate = validate();
+      if(!isvalidate) return;
+      //gửi dữ liệu đăng ký với API
+      const response = await fetch('http://10.0.2.2:3000/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          email,password
+         })
+      })
+      //xử lý phản hồi từ máy chủ
+      const data = await response.json();
+      console.log(data);
+      navigation.navigate('Login',{email:email,password:password});
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }}>
@@ -17,18 +64,27 @@ const Register = () => {
         </View>
         <View style={{width:'100%',justifyContent:'center',alignItems:'center',}}>
         <TextInput
+          onChangeText={setEmail}
           placeholder='Nhập email'
           style={styles.input}
         />
         <TextInput
+        onChangeText={setPassword}
           placeholder='Nhập mật khẩu'
           style={styles.input}
+          secureTextEntry={true}
+        />
+         <TextInput
+        onChangeText={setConfirmPassword}
+          placeholder='Nhập lại mật khẩu'
+          style={styles.input}
+          secureTextEntry={true}
         />
         </View>
         <View >
             <View style={{justifyContent:'center',alignItems:'center'}}>
-        <TouchableOpacity onPress={() => navigation.navigate('HomeTab')} style={styles.button}>
-          <Text style={{color:'#fff',fontWeight:'bold',fontSize:20}}>Đăng nhập</Text>
+        <TouchableOpacity onPress={handleRegister} style={styles.button}>
+          <Text style={{color:'#fff',fontWeight:'bold',fontSize:20}}>Đăng ký</Text>
         </TouchableOpacity>
         </View>
         <View style={{ flexDirection: 'row', marginTop: 20 }}>

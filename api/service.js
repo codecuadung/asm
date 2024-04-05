@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose')
 const sanphamRoute = require('../routes/sanphamRoute')
+const userRoute = require('../routes/userRoute')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,4 +14,5 @@ mongoose.connect('mongodb://localhost:27017/asm',
  db.once('open',()=>console.log('ket noi thanh cong'))
 
  app.use('/', sanphamRoute)
+ app.use(express.json(), userRoute);
  app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
